@@ -1,27 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
+    "target": "ES2017", // 编译目标设置为 ES2017
+    "lib": ["dom", "dom.iterable", "esnext"], // 引入 DOM 和 ESNext 库
+    "allowJs": true, // 允许使用 JavaScript 文件
+    "skipLibCheck": true, // 跳过库的类型检查
+    "strict": true, // 启用严格模式
+    "noEmit": true, // 不输出文件，只进行类型检查
+    "esModuleInterop": true, // 启用 ES 模块互操作
+    "module": "esnext", // 使用 ESNext 模块标准
+    "moduleResolution": "bundler", // 模块解析策略使用 bundler
+    "resolveJsonModule": true, // 支持导入 JSON 模块
+    "isolatedModules": true, // 强制每个文件都能独立编译
+    "jsx": "preserve", // 保留 JSX 语法，交给 Babel 处理
+    "incremental": true, // 开启增量编译
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"] // 设置路径别名
+    },
+    "baseUrl": ".", // 设置基本路径，确保路径别名可用
+    "resolveJsonModule": true, // 允许导入 JSON 文件
+    "strictNullChecks": true // 强制类型检查
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts", // Next.js 类型环境文件
+    "**/*.ts", // 包含所有 TypeScript 文件
+    "**/*.tsx", // 包含所有 TSX 文件
+    ".next/types/**/*.ts" // 包含 .next 内部类型文件
+  ],
+  "exclude": [
+    "node_modules" // 排除 node_modules 文件夹
+  ]
 }
