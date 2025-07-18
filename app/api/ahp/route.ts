@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     [3, 5, 1/3, 1],  // 风险控制能力 vs 其他三个标准的相对重要性
   ];
 
-  const result = calculateAHP(judgmentMatrix, scores);
+ const result = calculateAHP(judgmentMatrix, scores.map(score => score.value)); // 传递 scores 的值作为一维数组
+
 
   return new Response(JSON.stringify(result), {
     headers: { 'Content-Type': 'application/json' },
