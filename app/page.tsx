@@ -2,9 +2,23 @@
 
 import { useState } from 'react';
 
+// Define the types for Threshold and Score without changing the categories
+interface Threshold {
+  range: string;
+  description: string;
+  score: string;
+}
+
+interface Score {
+  category: string;
+  thresholds: Threshold[];
+  scoreRange: string;
+  value: number; // Track the score for each category
+}
+
 export default function Home() {
   // Define categories with their names, thresholds, and scoring standards
-  const mainCategories = [
+  const mainCategories: Score[] = [
     {
       category: '1. 成熟度评估（10分）',
       thresholds: [
@@ -13,6 +27,7 @@ export default function Home() {
         { range: '0-4', description: '与公司数字化战略关联度低', score: '0-4' }
       ],
       scoreRange: '0-10',
+      value: 0, // default score
     },
     {
       category: '2. 市场竞争力（8分）',
@@ -22,6 +37,7 @@ export default function Home() {
         { range: '0-2', description: '市场竞争力不足，存在较大竞争压力', score: '0-2' }
       ],
       scoreRange: '0-8',
+      value: 0, // default score
     },
     {
       category: '3. 创新价值（6分）',
@@ -31,6 +47,7 @@ export default function Home() {
         { range: '0-1', description: '无创新，缺乏市场竞争力', score: '0-1' }
       ],
       scoreRange: '0-6',
+      value: 0, // default score
     },
     {
       category: '4. 市场潜力（6分）',
@@ -40,6 +57,7 @@ export default function Home() {
         { range: '0-2', description: '市场潜力不足，竞争激烈', score: '0-2' }
       ],
       scoreRange: '0-6',
+      value: 0, // default score
     },
     {
       category: '5. 毛利率稳定性（10分）',
@@ -49,6 +67,7 @@ export default function Home() {
         { range: '0-4', description: '毛利率较低，波动较大', score: '0-4' }
       ],
       scoreRange: '0-10',
+      value: 0, // default score
     },
     {
       category: '6. 现金流稳定性（10分）',
@@ -58,6 +77,7 @@ export default function Home() {
         { range: '0-4', description: '现金流紧张，难以维持运营', score: '0-4' }
       ],
       scoreRange: '0-10',
+      value: 0, // default score
     },
     {
       category: '7. 成长潜力（10分）',
@@ -67,6 +87,7 @@ export default function Home() {
         { range: '0-4', description: '年增长率低于10%，增长潜力较差', score: '0-4' }
       ],
       scoreRange: '0-10',
+      value: 0, // default score
     },
     {
       category: '8. 项目内利率（4分）',
@@ -76,6 +97,7 @@ export default function Home() {
         { range: '0-1', description: '项目内利率低于5%，盈利能力较弱', score: '0-1' }
       ],
       scoreRange: '0-4',
+      value: 0, // default score
     },
     {
       category: '9. 合同保障性（8分）',
@@ -85,6 +107,7 @@ export default function Home() {
         { range: '0-3', description: '合同缺乏保障，存在法律风险', score: '0-3' }
       ],
       scoreRange: '0-8',
+      value: 0, // default score
     },
     {
       category: '10. 执行可行性（8分）',
@@ -94,6 +117,7 @@ export default function Home() {
         { range: '0-3', description: '执行体系不完善，缺乏有效推进', score: '0-3' }
       ],
       scoreRange: '0-8',
+      value: 0, // default score
     },
     {
       category: '11. 合规性保障性（6分）',
@@ -103,6 +127,7 @@ export default function Home() {
         { range: '0-2', description: '合规性差，存在违规风险', score: '0-2' }
       ],
       scoreRange: '0-6',
+      value: 0, // default score
     },
     {
       category: '12. 风险防范性（6分）',
@@ -112,10 +137,11 @@ export default function Home() {
         { range: '0-2', description: '风险管理薄弱，存在较大风险', score: '0-2' }
       ],
       scoreRange: '0-6',
+      value: 0, // default score
     },
   ];
 
-  const [scores, setScores] = useState<any[]>(mainCategories.map((cat) => ({ ...cat, value: 0 })));
+  const [scores, setScores] = useState<Score[]>(mainCategories);
   const [result, setResult] = useState<any>(null);
 
   // Handle score change for each category
@@ -135,11 +161,11 @@ export default function Home() {
   };
 
   // Function to calculate the final score by adding the category scores
-  const calculateFinalScore = (scores: any) => {
+  const calculateFinalScore = (scores: Score[]) => {
     let totalScore = 0;
 
     // Loop through each category and add its score
-    scores.forEach((score: any) => {
+    scores.forEach((score) => {
       if (score.value < 0 || score.value > parseInt(score.scoreRange.split('-')[1])) {
         alert(`Score for ${score.category} is out of range!`);
         return;
