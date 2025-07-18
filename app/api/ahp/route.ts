@@ -1,38 +1,39 @@
-import numeric from 'numeric';
+import * as math from 'mathjs';
 
 export async function POST(req: Request) {
   const { scores } = await req.json();
 
-  // Assume we are using a predefined judgment matrix
+  // 假设我们根据评分标准构建一个判断矩阵
   const judgmentMatrix = [
-    [1, 3, 1/5, 1/3],
-    [1/3, 1, 1/7, 1/5],
-    [5, 7, 1, 3],
-    [3, 5, 1/3, 1]
+    [1, 3, 1/5, 1/3],  // 产品技术性 vs 其他三个标准的相对重要性
+    [1/3, 1, 1/7, 1/5],  // 市场竞争力 vs 其他三个标准的相对重要性
+    [5, 7, 1, 3],  // 财务健康性 vs 其他三个标准的相对重要性
+    [3, 5, 1/3, 1],  // 风险控制能力 vs 其他三个标准的相对重要性
   ];
 
-  const result = calculateAHP(judgmentMatrix, scores.map((score) => score.value)); // Passing the scores as a 1D array
+  const result = calculateAHP(judgmentMatrix, scores.map((score) => score.value)); // 传递 scores 的值作为一维数组
 
   return new Response(JSON.stringify(result), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
-// AHP calculation function
-function calculateAHP(judgmentMatrix: number[][], scores: number[]) {
-  const matrix = numeric.clone(judgmentMatrix);
+// AHP 计算
+function calculateAHP(judgmentMatrix: number[], scores: any) {
+  const matrix = math.matrix(judgmentMatrix);
 
-  // Use numeric.js to calculate eigenvalues and eigenvectors
-  const eig = numeric.eig(matrix);
-  const eigenvector = eig.E[0]; // The first eigenvector
+  // 计算特征向量（权重）
+  const eig = math.eigs(matrix);
 
-  // Normalize the eigenvector to get the weights
-  const sum = eigenvector.reduce((a: number, b: number) => a + b, 0);
-  const weights = eigenvector.map((value: number) => value / sum);
+  // Check the structure of eig object (which should contain a 'values' and 'vectors' property)
+  const eigenvector = eig.vectors ? eig.vectors[0] : [];
 
-  // Calculate the final score by multiplying each score with its weight and summing
-  const finalScore = scores.reduce((acc: number, score: number, index: number) => {
-    return acc + score * weights[index];
+  // 计算权重
+  const weights = eigenvector.map((value: any) => value / eigenvector.reduce((a: any, b: any) => a + b, 0));
+
+  // 计算最终得分：每个评分与其权重相乘后求和
+  const finalScore = scores.reduce((acc: number, score: any, index: number) => {
+    return acc + score.value * weights[index];
   }, 0);
 
   return {
