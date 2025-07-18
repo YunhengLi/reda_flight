@@ -1,7 +1,11 @@
 import * as math from 'mathjs';
 
+interface Score {
+  value: number;
+}
+
 export async function POST(req: Request) {
-  const { scores } = await req.json();
+  const { scores }: { scores: Score[] } = await req.json();
 
   // 假设我们根据评分标准构建一个判断矩阵
   const judgmentMatrix = [
@@ -19,7 +23,7 @@ export async function POST(req: Request) {
 }
 
 // AHP 计算
-function calculateAHP(judgmentMatrix: number[][], scores: any[]) {
+function calculateAHP(judgmentMatrix: number[][], scores: number[]) {
   const matrix = math.matrix(judgmentMatrix);
 
   // 计算特征向量（权重）
@@ -30,7 +34,7 @@ function calculateAHP(judgmentMatrix: number[][], scores: any[]) {
   const weights = eigenvector.map((value: any) => value / eigenvector.reduce((a: any, b: any) => a + b, 0));
 
   // 计算最终得分：每个评分与其权重相乘后求和
-  const finalScore = scores.reduce((acc: number, score: any, index: number) => {
+  const finalScore = scores.reduce((acc: number, score: number, index: number) => {
     return acc + score * weights[index];
   }, 0);
 
